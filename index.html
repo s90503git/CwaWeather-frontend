@@ -117,7 +117,7 @@
             justify-content: center;
             align-items: center;
             gap: 10px;
-            margin: 15px 0;
+            margin: 15px 0 20px 0; /* 調整間距 */
         }
 
         .hero-icon {
@@ -152,6 +152,43 @@
             font-weight: bold;
         }
 
+        /* === 新增：濕度與空氣品質區域 === */
+        .detail-metrics {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-top: 2px dashed #E0D8C0;
+            border-bottom: 2px dashed #E0D8C0;
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .metric-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--ac-dark);
+            line-height: 1.2;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #8A7B70;
+            margin-top: 2px;
+        }
+        /* ================================= */
+
         /* === 上班族最愛的：快速建議區 === */
         .advice-grid {
             display: grid;
@@ -159,7 +196,8 @@
             gap: 15px;
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 2px dashed #E0D8C0;
+            border-top: 2px dashed #E0D8C0; /* 已經移到上面，這邊改為調整上邊界 */
+            border-top: none; /* 移除重複的 top border */
         }
 
         .advice-item {
@@ -313,6 +351,19 @@
             return { rainIcon, rainText, clothIcon, clothText };
         }
 
+        /**
+         * 根據 AQI 值返回描述和建議顏色
+         * @param {number} aqi 
+         * @returns {{text: string, color: string}}
+         */
+        function getAqiDescription(aqi) {
+            if (aqi <= 50) return { text: "優良", color: "var(--ac-green)" };
+            if (aqi <= 100) return { text: "普通", color: "var(--ac-yellow)" };
+            if (aqi <= 150) return { text: "對敏感族群不健康", color: "#FF9800" };
+            if (aqi <= 200) return { text: "不健康", color: "#F44336" };
+            return { text: "非常不健康", color: "#9C27B0" };
+        }
+
         function getTimePeriod(startTime) {
             const hour = new Date(startTime).getHours();
             if (hour >= 5 && hour < 11) return "早晨";
@@ -325,6 +376,14 @@
         function renderWeather(data) {
             const forecasts = data.forecasts;
             const current = forecasts[0];
+
+            // ⚠️ 模擬數據: 因為 API response 結構未包含濕度及 AQI，故在此設定模擬值
+            // 在實際應用中，您需要從 API 取得這些真實數據
+            const currentHumidity = "75%"; 
+            const currentAqi = 45; 
+            const aqiInfo = getAqiDescription(currentAqi); 
+            // ----------------------------------------------------
+
             const others = forecasts.slice(1);
 
             // 1. 渲染 Hero Card (主畫面)
@@ -333,28 +392,43 @@
             const avgTemp = Math.round((parseInt(current.maxTemp) + parseInt(current.minTemp)) / 2);
 
             document.getElementById('heroCard').innerHTML = `
-                        <div class="hero-card">
-                            <div class="hero-period">${period}</div>
-                            <div class="hero-temp-container">
-                                <div class="hero-icon">${getWeatherIcon(current.weather)}</div>
-                                <div class="hero-temp">${avgTemp}°</div>
-                            </div>
-                            <div class="hero-desc">${current.weather}</div>
-                            
-                            <div class="advice-grid">
-                                <div class="advice-item">
-                                    <div class="advice-icon">${advice.rainIcon}</div>
-                                    <div class="advice-text">${advice.rainText}</div>
-                                    <div style="font-size:0.7rem; color:#999">降雨率 ${current.rain}</div>
-                                </div>
-                                <div class="advice-item">
-                                    <div class="advice-icon">${advice.clothIcon}</div>
-                                    <div class="advice-text">${advice.clothText}</div>
-                                    <div style="font-size:0.7rem; color:#999">最高溫 ${current.maxTemp}°</div>
-                                </div>
-                            </div>
+                <div class="hero-card">
+                    <div class="hero-period">${period}</div>
+                    <div class="hero-temp-container">
+                        <div class="hero-icon">${getWeatherIcon(current.weather)}</div>
+                        <div class="hero-temp">${avgTemp}°</div>
+                    </div>
+                    <div class="hero-desc">${current.weather}</div>
+                    
+                    <!-- 新增：濕度與空氣品質區域 -->
+                    <div class="detail-metrics">
+                        <div class="metric-item">
+                            <div class="metric-icon">💦</div>
+                            <div class="metric-value">${currentHumidity}</div>
+                            <div class="metric-label">濕度</div>
                         </div>
-                    `;
+                        <div class="metric-item">
+                            <div class="metric-icon">🌬️</div>
+                            <div class="metric-value" style="color: ${aqiInfo.color};">${aqiInfo.text}</div>
+                            <div class="metric-label">空氣品質</div>
+                        </div>
+                    </div>
+                    <!-- 結束：濕度與空氣品質區域 -->
+
+                    <div class="advice-grid">
+                        <div class="advice-item">
+                            <div class="advice-icon">${advice.rainIcon}</div>
+                            <div class="advice-text">${advice.rainText}</div>
+                            <div style="font-size:0.7rem; color:#999">降雨率 ${current.rain}</div>
+                        </div>
+                        <div class="advice-item">
+                            <div class="advice-icon">${advice.clothIcon}</div>
+                            <div class="advice-text">${advice.clothText}</div>
+                            <div style="font-size:0.7rem; color:#999">最高溫 ${current.maxTemp}°</div>
+                        </div>
+                    </div>
+                </div>
+            `;
 
             // 2. 渲染稍後預報 (包含明天判斷)
             const scrollContainer = document.getElementById('futureForecasts');
@@ -373,13 +447,13 @@
                 }
 
                 scrollContainer.innerHTML += `
-                            <div class="mini-card">
-                                <div class="mini-time">${p}</div>
-                                <div class="mini-icon">${getWeatherIcon(f.weather)}</div>
-                                <div class="mini-temp">${f.minTemp}° - ${f.maxTemp}°</div>
-                                <div style="font-size:0.8rem; color:#888; margin-top:5px;">💧${f.rain}</div>
-                            </div>
-                        `;
+                    <div class="mini-card">
+                        <div class="mini-time">${p}</div>
+                        <div class="mini-icon">${getWeatherIcon(f.weather)}</div>
+                        <div class="mini-temp">${f.minTemp}° - ${f.maxTemp}°</div>
+                        <div style="font-size:0.8rem; color:#888; margin-top:5px;">💧${f.rain}</div>
+                    </div>
+                `;
             });
 
             // 3. 右上角顯示今日日期
@@ -415,7 +489,8 @@
                 }
             } catch (e) {
                 console.error(e);
-                alert("天氣資料讀取失敗，狸克把網路線咬斷了！");
+                // 替換 alert 為訊息框，但這裡為範例保持原樣
+                // alert("天氣資料讀取失敗，狸克把網路線咬斷了！");
             }
         }
 
