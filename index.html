@@ -8,9 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLMDsYy3vjT1tG8g2d7d5x9b3vP6v9wG9g83/1W3w3f76h8c3f4e2f9f8c3e6d5e0d"
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         :root {
@@ -22,7 +19,7 @@
             --color-cream-bg: #fffaf0;
             /* 卡片背景 - 乾淨的白色 */
             --color-card-bg: #FFFFFF;
-            /* 重點黃 - 來自 DAENG 的活潑色 */
+            /* 重點黃 - 來自 DAENG 的活潑色 (比奶油黃再深一點) */
             --color-daeng-yellow: #f7e6c4;
             /* 主要文字色 - 柔和的深藍灰 */
             --color-main-text: #2d3748;
@@ -31,8 +28,6 @@
 
             /* 保留粉色作為邊緣點綴，體現毛絨絨、粉紅臉頰的溫暖感 */
             --color-pink-blush: #FFC0CB;
-            /* 圓角尺寸 */
-            --border-radius-lg: 20px;
         }
 
         * {
@@ -63,78 +58,48 @@
             top: 0;
             z-index: 100;
             border-bottom: 1px solid var(--color-border);
-            gap: 10px;
+            gap: 10px; /* 新增間距 */
         }
 
-        /* 城市顯示/選擇區域容器 */
-        #city-selector-container {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            flex-grow: 1;
-            min-width: 0;
-        }
-
-        /* 下拉選單樣式 (繼承膠囊風格) */
+        /* 城市選擇器的新樣式，使用原本的 location-pill 風格 */
         #city-selector {
-            /* 移除原生樣式 */
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            /* 背景和文字顏色 */
             background: var(--color-taemin-dark-blue);
             color: white;
-            /* 內邊距，配合 icon */
-            padding: 5px 30px 5px 15px; 
-            /* 圓角 */
+            padding: 5px 30px 5px 15px; /* 右側空間留給箭頭 */
             border-radius: 25px;
             font-weight: 800;
             font-size: 1.1rem;
-            /* 邊框和陰影 */
             border: 2px solid white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             outline: none;
-            flex-grow: 1;
-            min-width: 120px;
+            /* 讓下拉選單佔據空間 */
+            flex-grow: 1; 
+            max-width: 250px;
             
-            /* 為了可愛風格，加上自定義下拉箭頭 */
+            /* 自定義下拉箭頭 */
             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M287%2069.9a17.8%2017.8%200%200%200%20-13.8%20-6.1H19A17.8%2017.8%200%200%200%205%2069.9a18%2018%200%200%200%205.3%2014.2l128%20128a18%2018%200%200%200%2025.4%200l128-128a18%2018%200%200%200%205.3-14.2z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 12px;
         }
-        
-        /* 定位按鈕樣式 */
-        #geolocation-btn {
-            background: var(--color-daeng-yellow);
-            color: var(--color-main-text);
-            border: 2px solid white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            font-size: 1.1rem;
-            flex-shrink: 0;
-            transition: background 0.2s ease, transform 0.1s ease;
+        /* 移除原本 location-pill 的樣式，改為使用 #city-selector */
+        .location-pill {
+            /* 由於我們使用 select 替換了這個 div，因此可以忽略或移除此樣式，
+               但為了不刪除說明，我們註解掉讓它不影響 select */
+            /* display: none; */ 
         }
 
-        #geolocation-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* 時間膠囊 */
         .update-pill {
             font-size: 0.8rem;
             color: var(--color-main-text);
             background: rgba(0, 0, 0, 0.05);
             padding: 4px 10px;
             border-radius: 12px;
-            flex-shrink: 0;
+            flex-shrink: 0; /* 確保不被壓縮 */
         }
 
         .container {
@@ -143,196 +108,274 @@
             margin: 0 auto;
         }
 
-        /* Hero Card - 核心卡片風格 */
+        /* === 核心：今日焦點卡片 (貓咪的柔軟墊子) === */
         .hero-card {
             background: var(--color-card-bg);
-            border-radius: var(--border-radius-lg);
+            border-radius: 30px;
             padding: 30px 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 0 0 5px var(--color-daeng-yellow);
             text-align: center;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border: 4px solid var(--color-border);
+            margin-bottom: 25px;
             position: relative;
-            overflow: hidden;
-            /* 邊緣添加可愛粉色點綴 */
-            border: 1px solid var(--color-pink-blush);
+            transition: transform 0.3s ease;
         }
 
+        .hero-card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* 像泰民日記般的標籤 */
         .hero-period {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--color-taemin-dark-blue);
-            margin-bottom: 15px;
-            letter-spacing: 1px;
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-1deg);
+            background: var(--color-taemin-dark-blue);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 15px 5px 15px 5px;
+            /* 不規則圓角 */
+            font-weight: bold;
+            border: 3px solid white;
+            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+            /* 修正手機換行問題 */
+            white-space: nowrap;
         }
 
         .hero-temp-container {
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 10px;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0 20px 0;
         }
 
+        /* 貓咪圖案的容器 (現在是天氣圖案的容器) */
         .cat-hero-container {
+            animation: float 4s infinite ease-in-out;
+            /* 輕柔漂浮 */
             font-size: 5rem;
-            /* 讓 Icon 看起來更像一隻漂浮的貓咪/圖案 */
-            animation: float 2s infinite ease-in-out;
+            /* 恢復大尺寸 */
+            line-height: 1;
+            /* 確保表情符號垂直置中 */
         }
 
         .hero-temp {
-            font-size: 5.5rem;
+            font-size: 5rem;
             font-weight: 900;
             color: var(--color-main-text);
             line-height: 1;
         }
 
         .hero-desc {
-            font-size: 1.4rem;
-            font-weight: 800;
+            font-size: 1.6rem;
             color: var(--color-taemin-dark-blue);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-weight: 800;
         }
-        
-        /* 詳細指標 */
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* === 濕度與空氣品質區域 === */
         .detail-metrics {
             display: flex;
             justify-content: space-around;
+            gap: 10px;
             padding: 15px 0;
-            border-top: 1px solid var(--color-border);
-            border-bottom: 1px solid var(--color-border);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            border-top: 2px dashed var(--color-border);
+            border-bottom: 2px dashed var(--color-border);
         }
 
         .metric-item {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            /* 圓潤效果 */
+            background: rgba(240, 240, 240, 0.3);
+            padding: 5px;
+            border-radius: 15px;
         }
 
         .metric-icon {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             margin-bottom: 5px;
         }
 
         .metric-value {
-            font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--color-main-text);
+            line-height: 1.2;
         }
 
         .metric-label {
-            font-size: 0.8rem;
-            color: var(--color-taemin-blue);
+            font-size: 0.9rem;
+            color: #8a98ac;
+            margin-top: 2px;
             font-weight: 600;
         }
+        /* ================================= */
 
-        /* 建議區塊 */
+        /* === 快速建議區 (貓咪的貼心提醒) === */
         .advice-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
+            margin-top: 20px;
+            padding-top: 0;
+            border-top: none;
         }
 
         .advice-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* 使用 Daeng 的活潑黃作為背景 */
             background: var(--color-daeng-yellow);
-            border-radius: 15px;
-            padding: 15px;
-            text-align: left;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            border: 1px dashed var(--color-pink-blush);
+            padding: 15px 10px;
+            border-radius: 20px;
+            box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.1s ease;
         }
 
+        .advice-item:active {
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+            transform: translateY(3px);
+        }
+
+        /* 建議區塊的大圖案 (雨傘/衣服) */
         .advice-icon {
-            font-size: 1.5rem;
+            font-size: 2.5rem;
             margin-bottom: 5px;
         }
 
+        /* 建議區塊的核心文案 (放大且重點顯示) */
         .advice-text {
+            /* 1. 優化排版：讓核心文字更突出 */
+            font-size: 1.1rem;
             font-weight: 800;
-            font-size: 0.95rem;
-            line-height: 1.4;
             color: var(--color-main-text);
+            margin: 5px 0 10px 0;
+            line-height: 1.5;
+            min-height: 4.5rem;
+            /* 確保兩欄高度一致 */
+            display: flex;
+            align-items: center;
+            text-align: center;
         }
 
+        /* 建議區塊的詳細資料行 (縮小且顏色柔和) */
         .advice-detail-line {
             font-size: 0.75rem;
-            color: var(--color-taemin-blue);
-            margin-top: 5px;
-        }
-        
-        /* 標題 */
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: var(--color-taemin-dark-blue);
-            margin: 25px 0 15px 0;
-            border-left: 5px solid var(--color-pink-blush);
-            padding-left: 10px;
+            color: rgba(0, 0, 0, 0.5);
+            font-weight: 600;
+            padding-top: 8px;
+            /* 增加與上方文案的距離 */
+            border-top: 1px dashed rgba(0, 0, 0, 0.1);
+            width: 100%;
         }
 
-        /* 預報卡片 (Scrollable) */
+
+        /* === 稍後預報：橫向滑動區 === */
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--color-main-text);
+            margin-bottom: 15px;
+            margin-left: 5px;
+            font-weight: 900;
+            /* 使用貓咪爪印或泰民藍裝飾 */
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .section-title::before {
+            content: '🐾';
+            /* 貓咪爪印 */
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
         .scroll-container {
             display: flex;
             overflow-x: auto;
-            gap: 10px;
+            gap: 15px;
             padding-bottom: 10px;
-            scrollbar-width: none; /* Firefox 隱藏捲軸 */
-            -ms-overflow-style: none; /* IE/Edge 隱藏捲軸 */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+
         .scroll-container::-webkit-scrollbar {
-            display: none; /* Chrome/Safari 隱藏捲軸 */
+            display: none;
         }
 
         .mini-card {
-            flex-shrink: 0;
+            min-width: 150px;
             background: var(--color-card-bg);
-            border-radius: 15px;
-            padding: 15px 10px;
+            border-radius: 25px;
+            padding: 20px 15px;
             text-align: center;
-            width: 100px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease;
-        }
-
-        .mini-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--color-border);
+            flex-shrink: 0;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
         }
 
         .mini-time {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--color-taemin-blue);
-            margin-bottom: 5px;
+            background: var(--color-taemin-dark-blue);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
 
         .mini-icon {
-            font-size: 2rem;
+            font-size: 3rem;
             margin: 5px 0;
         }
 
         .mini-temp {
-            font-weight: 800;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
+            font-weight: 900;
             color: var(--color-main-text);
         }
-        
+
         /* Loading 畫面 */
         .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--color-cream-bg);
+            right: 0;
+            bottom: 0;
+            background: var(--color-cream-bg);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            transition: opacity 0.3s ease;
+            z-index: 999;
         }
 
         .loading-icon {
             font-size: 4rem;
             animation: float 2s infinite ease-in-out;
+            /* 使用 float 動畫 */
         }
 
         .loading-text {
@@ -341,17 +384,12 @@
             margin-top: 20px;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
         /* 訊息框 (取代 alert) */
         #message-box {
             position: fixed;
             bottom: 20px;
             left: 50%;
-            transform: translateX(-50%) translateY(10px);
+            transform: translateX(-50%);
             background-color: var(--color-taemin-dark-blue);
             color: white;
             padding: 12px 20px;
@@ -375,11 +413,7 @@
     <div id="message-box"></div>
 
     <div class="status-bar">
-        <div id="city-selector-container">
-            <select id="city-selector"></select>
-            <div id="geolocation-btn" title="自動定位到您的位置">📍</div>
-        </div>
-
+        <select id="city-selector"></select>
         <div id="updateTime" class="update-pill">更新中...</div>
     </div>
 
@@ -395,9 +429,8 @@
     </div>
 
     <script>
-        // 假設你的後端 SERVER_BASE_URL 已經設定好且能運作
+        // 設定為您自己的後端服務網址
         const SERVER_BASE_URL = "https://weather-viv.zeabur.app";
-        
         // CWA 氣象資料開放平臺 API 支援的縣市
         const SUPPORTED_CITIES = [
             "新北市", "臺北市", "桃園市", "臺中市", "臺南市", "高雄市", 
@@ -405,12 +438,13 @@
             "南投縣", "雲林縣", "嘉義縣", "屏東縣", "宜蘭縣", "花蓮縣", "臺東縣", 
             "澎湖縣", "金門縣", "連江縣"
         ];
-        
         const DEFAULT_CITY = "新北市";
-        let currentCity = DEFAULT_CITY;
+        
+        // 【注意】API_URL 變數移除，改在 fetchWeather 中動態生成。
+        // 原來的註釋：// 【注意】API 端點暫時使用高雄，以避免新北市資料錯誤導致應用程式無法載入
+        // ----------------------------------------------
 
-
-        // --- Message Box Logic ---
+        // --- Message Box Logic (for error handling) ---
         const messageBox = document.getElementById('message-box');
         let messageTimeout;
 
@@ -418,63 +452,63 @@
             clearTimeout(messageTimeout);
             messageBox.textContent = message;
             messageBox.style.opacity = '1';
-            messageBox.style.transform = 'translateX(-50%) translateY(0)';
+            // 由於原來的 CSS 已經有 transform: translateX(-50%)，這裡只需要控制 Y 軸
+            messageBox.style.transform = 'translateX(-50%) translateY(0)'; 
 
             messageTimeout = setTimeout(() => {
                 messageBox.style.opacity = '0';
                 messageBox.style.transform = 'translateX(-50%) translateY(10px)';
             }, 5000);
         }
-        // -------------------------
-        
-        /**
-         * 根據天氣描述返回可愛的 Icon (修復問題 1)
-         */
+        // ----------------------------------------------
+
         function getWeatherIcon(weather) {
-            if (!weather) return "✨";
-            if (weather.includes("晴")) return "☀️"; // 泰民貓咪主題的太陽
-            if (weather.includes("多雲")) return "🌥️"; // 貓咪躲在雲後
-            if (weather.includes("陰")) return "☁️"; // 貓咪的灰色毛絨絨
-            if (weather.includes("雨")) return "💧"; // 貓咪的淚滴/雨滴
-            if (weather.includes("雷")) return "⚡"; // 貓咪被嚇到
-            if (weather.includes("雪")) return "❄️"; // 貓咪玩雪
-            return "🐈"; // 預設：一隻可愛的貓咪
+            if (!weather) return "✨"; // 泰民風格的預設
+            if (weather.includes("晴")) return "☀️";
+            if (weather.includes("多雲")) return "⛅";
+            if (weather.includes("陰")) return "☁️";
+            if (weather.includes("雨")) return "☔"; // 使用更柔和的雨傘
+            if (weather.includes("雷")) return "⛈️";
+            if (weather.includes("貓")) return "🐈"; // 惡搞一下
+            return "🌤️";
         }
 
-        // --- (getAdvice, getAqiDescription, getTimePeriod 函數保持不變，為節省篇幅省略) ---
-
+        // 1. 文案優化：提供更像小貓咪溫暖可愛的建議
+        // 2. 移除文案中的重複圖案
         function getAdvice(rainProb, maxTemp, minTemp) {
             const minT = parseInt(minTemp);
             const maxT = parseInt(maxTemp);
             const avgTemp = (minT + maxT) / 2;
 
+            // --- Rain Advice (帶傘建議) ---
             let rainIcon = "💧";
-            let rainText = "撥雲見日！DAENG 說今天適合安心曬太陽！"; 
-            if (parseInt(rainProb) >= 40) { 
+            let rainText = "撥雲見日！DAENG 說今天適合安心曬太陽！";
+            if (parseInt(rainProb) >= 40) { // 高機率帶傘
                 rainIcon = "☔";
-                rainText = "GGUNG 說貓咪會變濕！一定要帶傘出門保護毛絨絨。"; 
-            } else if (parseInt(rainProb) > 15) { 
+                rainText = "GGUNG 說貓咪會變濕！一定要帶傘出門保護毛絨絨。";
+            } else if (parseInt(rainProb) > 15) { // 偶爾會下
                 rainIcon = "🌥️";
-                rainText = "像 DAENG 灑水一樣，可能會有毛毛雨，帶把折疊傘備用喔。"; 
+                rainText = "像 DAENG 灑水一樣，可能會有毛毛雨，帶把折疊傘備用喔。";
             }
 
+            // --- Clothing Advice (穿衣建議) ---
             let clothIcon = "👕";
             let clothText = "窩在家最舒適";
             if (avgTemp >= 30) {
                 clothIcon = "☀️";
-                clothText = "像在 DAENG 暖爐邊，穿最涼快的短袖吧！"; 
+                clothText = "像在 DAENG 暖爐邊，穿最涼快的短袖吧！";
             } else if (avgTemp >= 25) {
                 clothIcon = "🩳";
-                clothText = "暖暖的像被太陽親吻，一件柔軟的短袖就足夠囉！"; 
+                clothText = "暖暖的像被太陽親吻，一件柔軟的短袖就足夠囉！";
             } else if (avgTemp >= 20) {
                 clothIcon = "👚";
-                clothText = "貓咪需要抱抱的微涼天氣，穿件薄長袖或小外套吧。"; 
+                clothText = "貓咪需要抱抱的微涼天氣，穿件薄長袖或小外套吧。";
             } else if (avgTemp >= 15) {
                 clothIcon = "🧥";
-                clothText = "GGUNG 喜歡的溫度，建議穿上軟綿綿的毛衣或厚外套。"; 
+                clothText = "GGUNG 喜歡的溫度，建議穿上軟綿綿的毛衣或厚外套。";
             } else {
                 clothIcon = "🧣";
-                clothText = "凍僵啦！請穿最厚的衣服、戴圍巾，像 DAENG 一樣捲成球保暖。"; 
+                clothText = "凍僵啦！請穿最厚的衣服、戴圍巾，像 DAENG 一樣捲成球保暖。";
             }
 
             return {
@@ -482,35 +516,40 @@
                 rainText,
                 clothIcon,
                 clothText,
-                tempRange: `${minT}°C - ${maxT}°C`
+                tempRange: `${minT}°C - ${maxT}°C` // 溫度範圍
             };
         }
 
+        /**
+         * 3. 根據 AQI 值返回描述、建議顏色和貓頭圖案
+         * @param {number} aqi
+         * @returns {{text: string, color: string, icon: string}}
+         */
         function getAqiDescription(aqi) {
             if (aqi <= 50) return {
                 text: "優良 (深呼吸)",
                 color: "var(--color-taemin-dark-blue)",
-                icon: "😺"
+                icon: "😺" // Happy cat for good air
             };
             if (aqi <= 100) return {
                 text: "普通 (還可以)",
                 color: "var(--color-pink-blush)",
-                icon: "😼"
+                icon: "😼" // Smug cat, still okay
             };
             if (aqi <= 150) return {
                 text: "對敏感族群不健康",
                 color: "#FF9800",
-                icon: "😾"
+                icon: "😾" // Annoyed cat
             };
             if (aqi <= 200) return {
                 text: "不健康 (快關窗戶)",
                 color: "#F44336",
-                icon: "😿"
+                icon: "😿" // Sad cat, bad air
             };
             return {
                 text: "非常不健康 (逃跑吧)",
                 color: "#9C27B0",
-                icon: "😷"
+                icon: "😷" // Masked cat for very bad air
             };
         }
 
@@ -523,17 +562,11 @@
             return "深夜 (做夢時間)";
         }
 
-        // ----------------------------------------------------------------------
-
         function renderWeather(data) {
             const forecasts = data.forecasts;
             const current = forecasts[0];
-            
-            // 確保下拉選單的值與當前城市同步
-            const citySelector = document.getElementById('city-selector');
-            citySelector.value = data.city;
 
-            // ⚠️ 模擬數據 (若你的 API 未提供，這裡保持模擬)
+            // ⚠️ 模擬數據: 因為 API response 結構未包含濕度及 AQI，故在此設定模擬值
             const currentHumidity = "68%";
             const currentAqi = 65;
             const aqiInfo = getAqiDescription(currentAqi);
@@ -541,7 +574,7 @@
 
             const others = forecasts.slice(1);
 
-            // 1. 渲染 Hero Card (主畫面) - 恢復可愛卡片樣式
+            // 1. 渲染 Hero Card (主畫面)
             const advice = getAdvice(current.rain, current.maxTemp, current.minTemp);
             const period = getTimePeriod(current.startTime);
             const avgTemp = Math.round((parseInt(current.maxTemp) + parseInt(current.minTemp)) / 2);
@@ -569,7 +602,6 @@
                             <div class="metric-label">空氣品質</div>
                         </div>
                     </div>
-
                     <div class="advice-grid">
                         <div class="advice-item">
                             <div class="advice-icon">${advice.rainIcon}</div>
@@ -585,14 +617,14 @@
                 </div>
             `;
 
-            // 2. 渲染稍後預報
+            // 2. 渲染稍後預報 (包含明天判斷)
             const scrollContainer = document.getElementById('futureForecasts');
             scrollContainer.innerHTML = '';
 
             const todayDate = new Date().getDate();
 
             others.forEach(f => {
-                let p = getTimePeriod(f.startTime).split(' ')[0];
+                let p = getTimePeriod(f.startTime).split(' ')[0]; // 只取時間段名稱
                 const fDate = new Date(f.startTime);
                 if (fDate.getDate() !== todayDate) {
                     p = "明天 " + p;
@@ -619,24 +651,23 @@
         }
 
         /**
-         * 核心天氣查詢函數，現在帶有城市名稱參數
-         * @param {string} city 要查詢的城市名稱
+         * 核心天氣查詢函數，接受一個城市名稱作為參數
+         * @param {string} city 欲查詢的城市名稱
          */
         async function fetchWeather(city) {
-            currentCity = city; // 更新當前城市
+            // 根據選擇的城市動態生成 API 網址
+            const encodedCity = encodeURIComponent(city);
+            const API_URL = `${SERVER_BASE_URL}/api/weather?locationName=${encodedCity}`;
             
-            // 顯示 loading 畫面
+            // 顯示 Loading 畫面
             document.getElementById('loading').style.display = 'flex';
             document.getElementById('mainContent').style.display = 'none';
 
-            // 城市名稱需要 URLEncode 確保中文傳輸正確
-            const encodedCity = encodeURIComponent(city);
-            const API_URL = `${SERVER_BASE_URL}/api/weather?locationName=${encodedCity}`; 
-            
             try {
-                // 加入延遲，讓使用者看到可愛的 loading 畫面
+                // 1. 定義「最低等待時間」：1500 毫秒 (1.5秒)
                 const delayPromise = new Promise(resolve => setTimeout(resolve, 1500));
-                
+
+                // 2. 定義「抓取資料」的工作
                 const fetchPromise = fetch(API_URL).then(res => {
                     if (!res.ok) {
                         return res.json().then(errorData => {
@@ -646,25 +677,32 @@
                     return res.json();
                 });
 
+                // 3. Promise.all 會等待「兩個都完成」才會往下走
                 const [_, json] = await Promise.all([delayPromise, fetchPromise]);
 
                 if (json.success) {
                     renderWeather(json.data);
+                    
+                    // 資料處理好後，隱藏 Loading，顯示主畫面
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
                 } else {
+                    // API 發生錯誤時，顯示友善的訊息
                     console.error("API Error: Success status is false");
-                    throw new Error(json.message || "API 錯誤：Success 狀態為 False"); 
+                    throw new Error(json.message || "API 錯誤：Success 狀態為 False");
                 }
             } catch (e) {
                 console.error("Fetch Error:", e);
+                // 失敗時，隱藏 Loading，顯示主畫面 (讓訊息框可以彈出)
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('mainContent').style.display = 'block'; 
                 showMessage(`🐾 貓咪們偵測到連線錯誤！無法取得 ${city} 天氣資料。`);
             }
         }
         
-        // --- 城市選擇器功能 ---
+        /**
+         * 設定城市下拉選單並監聽事件
+         */
         function setupCitySelector() {
             const selector = document.getElementById('city-selector');
             
@@ -672,111 +710,22 @@
             SUPPORTED_CITIES.forEach(city => {
                 const option = document.createElement('option');
                 option.value = city;
-                option.textContent = `💎 ${city} 觀測站`; // 讓選項也帶有主題風格
+                option.textContent = `💎 ${city} 觀測站`;
                 selector.appendChild(option);
             });
             
-            // 2. 預設選中第一個城市 (或 DEFAULT_CITY)
+            // 2. 預設選中第一個城市
             selector.value = DEFAULT_CITY;
             
             // 3. 監聽變動事件
             selector.addEventListener('change', (e) => {
-                fetchWeather(e.target.value);
+                fetchWeather(e.target.value); // 呼叫新的 fetchWeather 函式
             });
         }
-        
-        // --- 地理定位功能 ---
-        async function getCityFromCoords(lat, lon) {
-            // 前端已經確認此 API 運作正常，保持結構不變
-            const REVERSE_GEOCODE_URL = `${SERVER_BASE_URL}/api/reverse-geocode?lat=${lat}&lon=${lon}`;
-
-            try {
-                const response = await fetch(REVERSE_GEOCODE_URL);
-                if (!response.ok) {
-                    throw new Error("無法將座標轉換為城市名稱。");
-                }
-                const json = await response.json();
-                
-                const detectedCity = json.city; 
-
-                if (!detectedCity) {
-                    throw new Error("定位結果無效，請手動選擇城市。");
-                }
-
-                // 檢查定位到的城市是否在我們的支援列表中
-                if (!SUPPORTED_CITIES.includes(detectedCity)) {
-                    showMessage(`🐾 貓咪偵測到您在 ${detectedCity}！但我們只能提供台灣縣市天氣，已切換回預設城市。`);
-                    return DEFAULT_CITY; // 返回預設城市
-                }
-
-                return detectedCity;
-
-            } catch (error) {
-                console.error("Geocoding Error:", error);
-                // 這裡不彈出訊息，讓主定位函數處理
-                throw new Error("定位轉換失敗");
-            }
-        }
-
-        function setupGeolocation() {
-            const geolocationBtn = document.getElementById('geolocation-btn');
-            const citySelector = document.getElementById('city-selector');
-
-            geolocationBtn.addEventListener('click', () => {
-                if (navigator.geolocation) {
-                    const originalIcon = geolocationBtn.innerHTML;
-                    geolocationBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; // 顯示 loading 狀態
-                    geolocationBtn.disabled = true;
-
-                    showMessage("📍 貓咪正在鎖定您的位置...");
-
-                    navigator.geolocation.getCurrentPosition(async (position) => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        
-                        try {
-                            const detectedCity = await getCityFromCoords(lat, lon);
-                            
-                            // *** 修復問題 3：不再隱藏下拉選單，而是更新它的值 ***
-                            citySelector.value = detectedCity;
-                            
-                            // 重新查詢天氣
-                            fetchWeather(detectedCity);
-                            showMessage(`✅ 成功定位到 ${detectedCity}！`);
-
-                        } catch (e) {
-                            console.error("Geolocation to City failed:", e);
-                            showMessage("❌ 定位成功，但無法找到您的縣市名稱。請手動選擇。");
-                            // 保持在當前選單的城市
-                        }
-
-                        geolocationBtn.innerHTML = originalIcon;
-                        geolocationBtn.disabled = false;
-
-                    }, (error) => {
-                        console.error("Geolocation Error:", error);
-                        showMessage("❌ 定位被拒絕或失敗！請手動選擇城市。");
-                        
-                        geolocationBtn.innerHTML = originalIcon;
-                        geolocationBtn.disabled = false;
-                        
-                    }, {
-                        enableHighAccuracy: false,
-                        timeout: 10000,
-                        maximumAge: 0
-                    });
-
-                } else {
-                    showMessage("❌ 您的瀏覽器不支援地理定位！");
-                }
-            });
-        }
-
 
         // 程式啟動點
         document.addEventListener("DOMContentLoaded", () => {
             setupCitySelector(); // 設定下拉選單
-            setupGeolocation(); // 設定定位按鈕
             fetchWeather(DEFAULT_CITY); // 首次載入預設城市天氣
         });
     </script>
