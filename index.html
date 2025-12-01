@@ -22,7 +22,7 @@
             --color-cream-bg: #fffaf0;
             /* 卡片背景 - 乾淨的白色 */
             --color-card-bg: #FFFFFF;
-            /* 重點黃 - 來自 DAENG 的活潑色 (比奶油黃再深一點) */
+            /* 重點黃 - 來自 DAENG 的活潑色 */
             --color-daeng-yellow: #f7e6c4;
             /* 主要文字色 - 柔和的深藍灰 */
             --color-main-text: #2d3748;
@@ -31,6 +31,8 @@
 
             /* 保留粉色作為邊緣點綴，體現毛絨絨、粉紅臉頰的溫暖感 */
             --color-pink-blush: #FFC0CB;
+            /* 圓角尺寸 */
+            --border-radius-lg: 20px;
         }
 
         * {
@@ -61,7 +63,6 @@
             top: 0;
             z-index: 100;
             border-bottom: 1px solid var(--color-border);
-            /* 調整狀態列的間距與佈局 */
             gap: 10px;
         }
 
@@ -69,48 +70,39 @@
         #city-selector-container {
             display: flex;
             align-items: center;
-            /* 讓選擇器和定位按鈕並排 */
             gap: 5px;
-            /* 允許內容佔滿空間 */
-            flex-grow: 1; 
+            flex-grow: 1;
             min-width: 0;
         }
 
-        /* 城市名稱顯示 (用於定位或選單後) */
-        #current-city-display {
-             /* 繼承 location-pill 樣式 */
-            background: var(--color-taemin-dark-blue);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 25px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            border: 2px solid white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            /* 確保單行顯示，不被擠壓 */
-            white-space: nowrap; 
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* 下拉選單樣式 */
+        /* 下拉選單樣式 (繼承膠囊風格) */
         #city-selector {
-            /* 繼承 location-pill 樣式，並調整為可互動的選單 */
+            /* 移除原生樣式 */
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
+            /* 背景和文字顏色 */
             background: var(--color-taemin-dark-blue);
             color: white;
-            padding: 5px 15px 5px 15px; /* 調整 padding 配合 icon */
+            /* 內邊距，配合 icon */
+            padding: 5px 30px 5px 15px; 
+            /* 圓角 */
             border-radius: 25px;
             font-weight: 800;
             font-size: 1.1rem;
+            /* 邊框和陰影 */
             border: 2px solid white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             outline: none;
-            /* 移除原生箭頭，使用背景圖或 icon 替代 (這裡暫不處理背景圖，只用樣式) */
-            flex-grow: 1; /* 佔滿剩餘空間 */
+            flex-grow: 1;
+            min-width: 120px;
+            
+            /* 為了可愛風格，加上自定義下拉箭頭 */
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M287%2069.9a17.8%2017.8%200%200%200%20-13.8%20-6.1H19A17.8%2017.8%200%200%200%205%2069.9a18%2018%200%200%200%205.3%2014.2l128%20128a18%2018%200%200%200%2025.4%200l128-128a18%2018%200%200%200%205.3-14.2z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
         }
         
         /* 定位按鈕樣式 */
@@ -118,7 +110,7 @@
             background: var(--color-daeng-yellow);
             color: var(--color-main-text);
             border: 2px solid white;
-            border-radius: 50%; /* 變成圓形按鈕 */
+            border-radius: 50%;
             width: 40px;
             height: 40px;
             display: flex;
@@ -127,7 +119,7 @@
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             font-size: 1.1rem;
-            flex-shrink: 0; /* 防止按鈕被壓縮 */
+            flex-shrink: 0;
             transition: background 0.2s ease, transform 0.1s ease;
         }
 
@@ -135,7 +127,7 @@
             transform: scale(0.95);
         }
 
-
+        /* 時間膠囊 */
         .update-pill {
             font-size: 0.8rem;
             color: var(--color-main-text);
@@ -145,20 +137,202 @@
             flex-shrink: 0;
         }
 
-        /* [保持原有樣式，省略部分] */
-
         .container {
             padding: 20px;
             max-width: 600px;
             margin: 0 auto;
         }
+
+        /* Hero Card - 核心卡片風格 */
+        .hero-card {
+            background: var(--color-card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 30px 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 0 0 5px var(--color-daeng-yellow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            /* 邊緣添加可愛粉色點綴 */
+            border: 1px solid var(--color-pink-blush);
+        }
+
+        .hero-period {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-taemin-dark-blue);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .hero-temp-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .cat-hero-container {
+            font-size: 5rem;
+            /* 讓 Icon 看起來更像一隻漂浮的貓咪/圖案 */
+            animation: float 2s infinite ease-in-out;
+        }
+
+        .hero-temp {
+            font-size: 5.5rem;
+            font-weight: 900;
+            color: var(--color-main-text);
+            line-height: 1;
+        }
+
+        .hero-desc {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--color-taemin-dark-blue);
+            margin-bottom: 30px;
+        }
         
-        /* ... 其他 CSS 樣式保持不變 ... */
+        /* 詳細指標 */
+        .detail-metrics {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 30px;
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--color-taemin-blue);
+            font-weight: 600;
+        }
+
+        /* 建議區塊 */
+        .advice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .advice-item {
+            background: var(--color-daeng-yellow);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: left;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px dashed var(--color-pink-blush);
+        }
+
+        .advice-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .advice-text {
+            font-weight: 800;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: var(--color-main-text);
+        }
+
+        .advice-detail-line {
+            font-size: 0.75rem;
+            color: var(--color-taemin-blue);
+            margin-top: 5px;
+        }
+        
+        /* 標題 */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--color-taemin-dark-blue);
+            margin: 25px 0 15px 0;
+            border-left: 5px solid var(--color-pink-blush);
+            padding-left: 10px;
+        }
+
+        /* 預報卡片 (Scrollable) */
+        .scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding-bottom: 10px;
+            scrollbar-width: none; /* Firefox 隱藏捲軸 */
+            -ms-overflow-style: none; /* IE/Edge 隱藏捲軸 */
+        }
+        .scroll-container::-webkit-scrollbar {
+            display: none; /* Chrome/Safari 隱藏捲軸 */
+        }
+
+        .mini-card {
+            flex-shrink: 0;
+            background: var(--color-card-bg);
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            width: 100px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .mini-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .mini-time {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-taemin-blue);
+            margin-bottom: 5px;
+        }
+
+        .mini-icon {
+            font-size: 2rem;
+            margin: 5px 0;
+        }
+
+        .mini-temp {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--color-main-text);
+        }
+        
+        /* Loading 畫面 */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-cream-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
 
         .loading-icon {
             font-size: 4rem;
             animation: float 2s infinite ease-in-out;
-            /* 使用 float 動畫 */
         }
 
         .loading-text {
@@ -167,12 +341,17 @@
             margin-top: 20px;
         }
 
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
         /* 訊息框 (取代 alert) */
         #message-box {
             position: fixed;
             bottom: 20px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(10px);
             background-color: var(--color-taemin-dark-blue);
             color: white;
             padding: 12px 20px;
@@ -199,7 +378,6 @@
         <div id="city-selector-container">
             <select id="city-selector"></select>
             <div id="geolocation-btn" title="自動定位到您的位置">📍</div>
-            <div id="current-city-display" style="display: none;"></div>
         </div>
 
         <div id="updateTime" class="update-pill">更新中...</div>
@@ -217,12 +395,10 @@
     </div>
 
     <script>
-        // 【注意：你需要一個後端 API 來處理經緯度到城市名稱的轉換！】
-        // 為了實作自動定位，假設你的後端 SERVER_BASE_URL 已經有一個 API endpoint 可以處理這件事。
-        // 例如：/api/reverse-geocode?lat=25.0478&lon=121.5318 => { city: "臺北市" }
+        // 假設你的後端 SERVER_BASE_URL 已經設定好且能運作
         const SERVER_BASE_URL = "https://weather-viv.zeabur.app";
         
-        // CWA 氣象資料開放平臺 API (36小時預報) 支援的縣市
+        // CWA 氣象資料開放平臺 API 支援的縣市
         const SUPPORTED_CITIES = [
             "新北市", "臺北市", "桃園市", "臺中市", "臺南市", "高雄市", 
             "基隆市", "新竹市", "嘉義市", "新竹縣", "苗栗縣", "彰化縣", 
@@ -251,18 +427,21 @@
         }
         // -------------------------
         
-        // ... (getWeatherIcon, getAdvice, getAqiDescription, getTimePeriod 函數保持不變) ...
-
+        /**
+         * 根據天氣描述返回可愛的 Icon (修復問題 1)
+         */
         function getWeatherIcon(weather) {
-            if (!weather) return "✨"; // 泰民風格的預設
-            if (weather.includes("晴")) return "☀️";
-            if (weather.includes("多雲")) return "⛅";
-            if (weather.includes("陰")) return "☁️";
-            if (weather.includes("雨")) return "☔"; // 使用更柔和的雨傘
-            if (weather.includes("雷")) return "⛈️";
-            if (weather.includes("貓")) return "🐈"; // 惡搞一下
-            return "🌤️";
+            if (!weather) return "✨";
+            if (weather.includes("晴")) return "☀️"; // 泰民貓咪主題的太陽
+            if (weather.includes("多雲")) return "🌥️"; // 貓咪躲在雲後
+            if (weather.includes("陰")) return "☁️"; // 貓咪的灰色毛絨絨
+            if (weather.includes("雨")) return "💧"; // 貓咪的淚滴/雨滴
+            if (weather.includes("雷")) return "⚡"; // 貓咪被嚇到
+            if (weather.includes("雪")) return "❄️"; // 貓咪玩雪
+            return "🐈"; // 預設：一隻可愛的貓咪
         }
+
+        // --- (getAdvice, getAqiDescription, getTimePeriod 函數保持不變，為節省篇幅省略) ---
 
         function getAdvice(rainProb, maxTemp, minTemp) {
             const minT = parseInt(minTemp);
@@ -303,7 +482,7 @@
                 rainText,
                 clothIcon,
                 clothText,
-                tempRange: `${minT}°C - ${maxT}°C` // 溫度範圍
+                tempRange: `${minT}°C - ${maxT}°C`
             };
         }
 
@@ -350,19 +529,11 @@
             const forecasts = data.forecasts;
             const current = forecasts[0];
             
-            // 替換城市名稱顯示
-            const cityDisplay = document.getElementById('current-city-display');
+            // 確保下拉選單的值與當前城市同步
             const citySelector = document.getElementById('city-selector');
+            citySelector.value = data.city;
 
-            if(citySelector.style.display === 'none') {
-                // 如果是自動定位，顯示 pill
-                cityDisplay.textContent = `💎 ${data.city} 天氣觀測站`;
-            } else {
-                // 如果是選單模式，更新選單的選中項 (確保城市名稱匹配)
-                citySelector.value = data.city;
-            }
-
-            // ⚠️ 模擬數據: 因為 API response 結構未包含濕度及 AQI，故在此設定模擬值
+            // ⚠️ 模擬數據 (若你的 API 未提供，這裡保持模擬)
             const currentHumidity = "68%";
             const currentAqi = 65;
             const aqiInfo = getAqiDescription(currentAqi);
@@ -370,7 +541,7 @@
 
             const others = forecasts.slice(1);
 
-            // 1. 渲染 Hero Card (主畫面)
+            // 1. 渲染 Hero Card (主畫面) - 恢復可愛卡片樣式
             const advice = getAdvice(current.rain, current.maxTemp, current.minTemp);
             const period = getTimePeriod(current.startTime);
             const avgTemp = Math.round((parseInt(current.maxTemp) + parseInt(current.minTemp)) / 2);
@@ -458,9 +629,12 @@
             document.getElementById('loading').style.display = 'flex';
             document.getElementById('mainContent').style.display = 'none';
 
-            const API_URL = `${SERVER_BASE_URL}/api/weather?locationName=${city}`; 
+            // 城市名稱需要 URLEncode 確保中文傳輸正確
+            const encodedCity = encodeURIComponent(city);
+            const API_URL = `${SERVER_BASE_URL}/api/weather?locationName=${encodedCity}`; 
             
             try {
+                // 加入延遲，讓使用者看到可愛的 loading 畫面
                 const delayPromise = new Promise(resolve => setTimeout(resolve, 1500));
                 
                 const fetchPromise = fetch(API_URL).then(res => {
@@ -493,15 +667,12 @@
         // --- 城市選擇器功能 ---
         function setupCitySelector() {
             const selector = document.getElementById('city-selector');
-            const display = document.getElementById('current-city-display');
-            const container = document.getElementById('city-selector-container');
-            const geolocationBtn = document.getElementById('geolocation-btn');
             
             // 1. 動態生成選項
             SUPPORTED_CITIES.forEach(city => {
                 const option = document.createElement('option');
                 option.value = city;
-                option.textContent = city;
+                option.textContent = `💎 ${city} 觀測站`; // 讓選項也帶有主題風格
                 selector.appendChild(option);
             });
             
@@ -510,18 +681,13 @@
             
             // 3. 監聽變動事件
             selector.addEventListener('change', (e) => {
-                // 切換城市時，確保切換回選單模式
-                selector.style.display = 'block';
-                display.style.display = 'none';
-                geolocationBtn.style.display = 'flex';
                 fetchWeather(e.target.value);
             });
         }
         
         // --- 地理定位功能 ---
         async function getCityFromCoords(lat, lon) {
-            // 這個 API endpoint 需要你在你的後端伺服器上實現，
-            // 用來呼叫 Google Maps Geocoding API 或其他服務來完成「經緯度轉城市名稱」
+            // 前端已經確認此 API 運作正常，保持結構不變
             const REVERSE_GEOCODE_URL = `${SERVER_BASE_URL}/api/reverse-geocode?lat=${lat}&lon=${lon}`;
 
             try {
@@ -531,7 +697,6 @@
                 }
                 const json = await response.json();
                 
-                // 假設後端返回的 json 結構為 { city: "臺北市" }
                 const detectedCity = json.city; 
 
                 if (!detectedCity) {
@@ -540,7 +705,7 @@
 
                 // 檢查定位到的城市是否在我們的支援列表中
                 if (!SUPPORTED_CITIES.includes(detectedCity)) {
-                    showMessage(`🐾 貓咪偵測到您在 ${detectedCity}！但我們只能提供台灣縣市天氣，請手動選擇。`);
+                    showMessage(`🐾 貓咪偵測到您在 ${detectedCity}！但我們只能提供台灣縣市天氣，已切換回預設城市。`);
                     return DEFAULT_CITY; // 返回預設城市
                 }
 
@@ -548,18 +713,18 @@
 
             } catch (error) {
                 console.error("Geocoding Error:", error);
-                showMessage("🐾 定位失敗：無法確認您所在的縣市名稱。請手動選擇。");
-                return DEFAULT_CITY;
+                // 這裡不彈出訊息，讓主定位函數處理
+                throw new Error("定位轉換失敗");
             }
         }
 
         function setupGeolocation() {
             const geolocationBtn = document.getElementById('geolocation-btn');
             const citySelector = document.getElementById('city-selector');
-            const cityDisplay = document.getElementById('current-city-display');
 
             geolocationBtn.addEventListener('click', () => {
                 if (navigator.geolocation) {
+                    const originalIcon = geolocationBtn.innerHTML;
                     geolocationBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; // 顯示 loading 狀態
                     geolocationBtn.disabled = true;
 
@@ -569,39 +734,37 @@
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
                         
-                        // 嘗試將經緯度轉換為城市名稱
-                        const detectedCity = await getCityFromCoords(lat, lon);
-                        
-                        // 隱藏選單，顯示地點 pill (因為定位是精確的)
-                        citySelector.style.display = 'none';
-                        cityDisplay.style.display = 'block';
-                        geolocationBtn.style.display = 'none'; // 定位成功後隱藏定位按鈕
-                        
-                        // 重新查詢天氣
-                        fetchWeather(detectedCity);
-                        showMessage(`✅ 成功定位到 ${detectedCity}！`);
+                        try {
+                            const detectedCity = await getCityFromCoords(lat, lon);
+                            
+                            // *** 修復問題 3：不再隱藏下拉選單，而是更新它的值 ***
+                            citySelector.value = detectedCity;
+                            
+                            // 重新查詢天氣
+                            fetchWeather(detectedCity);
+                            showMessage(`✅ 成功定位到 ${detectedCity}！`);
+
+                        } catch (e) {
+                            console.error("Geolocation to City failed:", e);
+                            showMessage("❌ 定位成功，但無法找到您的縣市名稱。請手動選擇。");
+                            // 保持在當前選單的城市
+                        }
+
+                        geolocationBtn.innerHTML = originalIcon;
+                        geolocationBtn.disabled = false;
 
                     }, (error) => {
                         console.error("Geolocation Error:", error);
                         showMessage("❌ 定位被拒絕或失敗！請手動選擇城市。");
                         
-                        // 定位失敗，切回選單模式
-                        citySelector.style.display = 'block';
-                        cityDisplay.style.display = 'none';
-                        geolocationBtn.style.display = 'flex';
-                        fetchWeather(citySelector.value); // 查詢當前選單的值
+                        geolocationBtn.innerHTML = originalIcon;
+                        geolocationBtn.disabled = false;
                         
                     }, {
                         enableHighAccuracy: false,
                         timeout: 10000,
                         maximumAge: 0
                     });
-                    
-                    // 無論成功或失敗，最後都要解除 loading 狀態 (讓使用者知道定位過程結束)
-                    setTimeout(() => {
-                        geolocationBtn.innerHTML = '📍';
-                        geolocationBtn.disabled = false;
-                    }, 1000); 
 
                 } else {
                     showMessage("❌ 您的瀏覽器不支援地理定位！");
