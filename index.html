@@ -5,12 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>泰民與貓咪的天氣報告 - GGUNG & DAENG Weather</title>
-    <!-- 使用 Inter 字體作為現代 K-pop 風格的基底 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 
-    <!-- 泰民與貓咪主題的自訂顏色 -->
     <style>
         :root {
             /* 主題色 - 泰民的溫柔藍/SHINee珍珠湖水綠的柔和版 */
@@ -120,7 +118,7 @@
             border: 3px solid white;
             box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
             /* 修正手機換行問題 */
-            white-space: nowrap; 
+            white-space: nowrap;
         }
 
         .hero-temp-container {
@@ -244,7 +242,7 @@
         /* 建議區塊的核心文案 (放大且重點顯示) */
         .advice-text {
             /* 1. 優化排版：讓核心文字更突出 */
-            font-size: 1.1rem; 
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--color-main-text);
             margin: 5px 0 10px 0;
@@ -388,12 +386,10 @@
         <p class="loading-text">GGUNG 正在觀測雲的流動...</p>
     </div>
 
-    <!-- 訊息框容器 -->
     <div id="message-box"></div>
 
     <div class="status-bar">
-        <!-- 頂部觀測站名稱 -->
-        <div class="location-pill">💎 新北市 天氣觀測站</div>
+        <div id="locationPill" class="location-pill">💎 載入中... 天氣觀測站</div> 
         <div id="updateTime" class="update-pill">更新中...</div>
     </div>
 
@@ -409,8 +405,12 @@
     </div>
 
     <script>
-        // 【注意】API 端點暫時使用高雄，以避免新北市資料錯誤導致應用程式無法載入
-        const API_URL = "https://weather-viv.zeabur.app/api/weather/kaohsiung"; 
+        // 【修改點 1: 更新 API 端點，使用通用路由並指定 locationName】
+        // 伺服器的 Zeabur 網址
+        const SERVER_BASE_URL = "https://weather-viv.zeabur.app";
+        // 查詢「新北市」天氣的 API 網址
+        const LOCATION_NAME = "新北市";
+        const API_URL = `${SERVER_BASE_URL}/api/weather?locationName=${LOCATION_NAME}`; 
 
         // --- Message Box Logic (for error handling) ---
         const messageBox = document.getElementById('message-box');
@@ -533,6 +533,10 @@
             const forecasts = data.forecasts;
             const current = forecasts[0];
 
+            // *** 修改點 2: 顯示 API 返回的實際城市名稱 ***
+            document.getElementById('locationPill').innerHTML = `💎 ${data.city} 天氣觀測站`; 
+            // ----------------------------------------------------
+
             // ⚠️ 模擬數據: 因為 API response 結構未包含濕度及 AQI，故在此設定模擬值
             const currentHumidity = "68%";
             const currentAqi = 65;
@@ -550,7 +554,6 @@
                 <div class="hero-card">
                     <div class="hero-period">✨ ${period} ✨</div>
                     <div class="hero-temp-container">
-                        <!-- 恢復漂浮狀態的圖案 -->
                         <div class="cat-hero-container">
                             ${getWeatherIcon(current.weather)}
                         </div>
@@ -558,7 +561,6 @@
                     </div>
                     <div class="hero-desc">${current.weather}</div>
 
-                    <!-- 濕度與空氣品質區域 -->
                     <div class="detail-metrics">
                         <div class="metric-item">
                             <div class="metric-icon">💧</div>
@@ -566,29 +568,20 @@
                             <div class="metric-label">貓掌濕度</div>
                         </div>
                         <div class="metric-item">
-                            <!-- 空氣品質圖案使用動態貓貓頭 -->
                             <div class="metric-icon">${aqiInfo.icon}</div>
                             <div class="metric-value" style="color: ${aqiInfo.color};">${aqiInfo.text}</div>
                             <div class="metric-label">空氣品質</div>
                         </div>
                     </div>
-                    <!-- 結束：濕度與空氣品質區域 -->
-
                     <div class="advice-grid">
                         <div class="advice-item">
-                            <!-- 頂部大圖案 -->
                             <div class="advice-icon">${advice.rainIcon}</div>
-                            <!-- 核心文案 -->
                             <div class="advice-text">${advice.rainText}</div>
-                            <!-- 底部資料行，解決重複顯示問題 -->
                             <div class="advice-detail-line">GGUNG的降雨率 ${current.rain}</div>
                         </div>
                         <div class="advice-item">
-                            <!-- 頂部大圖案 -->
                             <div class="advice-icon">${advice.clothIcon}</div>
-                            <!-- 核心文案 -->
                             <div class="advice-text">${advice.clothText}</div>
-                            <!-- 底部資料行 -->
                             <div class="advice-detail-line">DAENG的溫度報告 ${advice.tempRange}</div>
                         </div>
                     </div>
@@ -634,7 +627,15 @@
                 const delayPromise = new Promise(resolve => setTimeout(resolve, 1500));
 
                 // 2. 定義「抓取資料」的工作
-                const fetchPromise = fetch(API_URL).then(res => res.json());
+                const fetchPromise = fetch(API_URL).then(res => {
+                    // 確保非 2xx 狀態碼也能被 catch 捕獲
+                    if (!res.ok) {
+                        return res.json().then(errorData => {
+                            throw new Error(errorData.message || `HTTP 錯誤：${res.status}`);
+                        });
+                    }
+                    return res.json();
+                });
 
                 // 3. Promise.all 會等待「兩個都完成」才會往下走
                 const [_, json] = await Promise.all([delayPromise, fetchPromise]);
@@ -646,16 +647,18 @@
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
                 } else {
-                    // API 發生錯誤時，顯示友善的訊息
+                    // API 發生錯誤時，顯示友善的訊息 (如：CWA API 錯誤)
                     console.error("API Error: Success status is false");
-                    throw new Error("API Error: Success status is false");
+                    // 這裡的 throw new Error 不會執行，因為上面已經處理 res.ok 錯誤
+                    throw new Error(json.message || "API 錯誤：Success 狀態為 False"); 
                 }
             } catch (e) {
                 console.error("Fetch Error:", e);
                 // 使用自定義訊息框取代 alert
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
-                showMessage("🐾 貓咪們偵測到網路線斷了，天氣資料讀取失敗！請稍後再試。");
+                // 顯示從後端傳來的錯誤訊息，或預設訊息
+                showMessage(`🐾 貓咪們偵測到網路線斷了！${e.message.includes("HTTP") ? "連線錯誤" : e.message}。`);
             }
         }
 
